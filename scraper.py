@@ -54,16 +54,29 @@ def scrape_listings():
     """Scrape current listings from StreetEasy"""
     headers = {
         'User-Agent': get_user_agent(),
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
         'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Ch-Ua': '"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"macOS"',
+        'Cache-Control': 'max-age=0',
     }
     
     try:
         print(f"[{datetime.now()}] Checking StreetEasy for new listings...")
-        response = requests.get(STREETEASY_URL, headers=headers, timeout=30)
+        
+        # Add a small delay to seem more human
+        time.sleep(random.uniform(1, 3))
+        
+        # Use a session for better cookie handling
+        session = requests.Session()
+        response = session.get(STREETEASY_URL, headers=headers, timeout=30)
         response.raise_for_status()
         
         soup = BeautifulSoup(response.content, 'html.parser')
